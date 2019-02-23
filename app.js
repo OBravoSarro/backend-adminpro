@@ -6,6 +6,7 @@ var bodyParser = require('body-parser');
 //Import routes
 var appRoutes = require('./routes/app');
 var appUser = require('./routes/user');
+var appLogin = require('./routes/login');
 
 // Inicializar variables
 var app = express();
@@ -26,6 +27,7 @@ app.use(bodyParser.json());
 //  routes
 app.use('/', appRoutes);
 app.use('/user', appUser);
+app.use('/login', appLogin);
 
 // Escuchar peticiones
 app.listen(3000, () => {

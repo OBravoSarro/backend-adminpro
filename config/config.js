@@ -1,0 +1,1 @@
+module.exports.SEED = 'E:Be-d_G@aw1=';
