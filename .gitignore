@@ -1,1 +1,5 @@
 node_modules/
+storage/*/*.png
+storage/*/*jpg
+storage/*/*jpeg
+storage/*/*gif

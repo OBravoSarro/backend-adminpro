@@ -4,13 +4,24 @@ var app = express();
 var mdAuthentication = require('../middlewares/authentication');
 
 var Hospital = require('../models/hospital');
+var PAGINATE_LIMIT = require('../config/config').PAGINATE_LIMIT;
 
 // =============================================
 // Get hospitals
 // =============================================
 
 app.get('/', (req, res, next) => {
+
+    var from = req.query.from || 0;
+    from = Number(from);
+
+    var size = req.query.size || PAGINATE_LIMIT;
+    size = Number(size);
+
     Hospital.find({ }, 'name img user')
+    .skip(from*size)
+    .limit(size)
+    .populate('user', 'name lastname email img')
     .exec(
         (err, dataRes) => {
             if( err ){
@@ -21,9 +32,27 @@ app.get('/', (req, res, next) => {
                 });
             }
 
-            res.status(200).json({
-                ok: true,
-                data: dataRes
+            Hospital.countDocuments({}, (err, result) => {
+
+                if( err ){
+                    return res.status(500).json({
+                        ok: false,
+                        message: 'User error DB',
+                        errors: err
+                    });
+                }
+
+                res.status(200).json({
+                    ok: true,
+                    data: dataRes,
+                    total: result,
+                    pagination:{
+                        actual: from,
+                        pages: Math.ceil(result/size),
+                        size: size
+                    }
+                });
+
             });
 
         });

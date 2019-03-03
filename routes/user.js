@@ -5,6 +5,7 @@ var mdAuthentication = require('../middlewares/authentication');
 
 var app = express();
 var User = require('../models/user');
+var PAGINATE_LIMIT = require('../config/config').PAGINATE_LIMIT;
 
 
 // =============================================
@@ -12,7 +13,16 @@ var User = require('../models/user');
 // =============================================
 
 app.get('/', (req, res, next) => {
+
+    var from = req.query.from || 0;
+    from = Number(from);
+
+    var size = req.query.size || PAGINATE_LIMIT;
+    size = Number(size);
+
     User.find({ }, 'name lastname email img role')
+    .skip(from*size)
+    .limit(size)
     .exec(
         (err, users) => {
             if( err ){
@@ -21,12 +31,31 @@ app.get('/', (req, res, next) => {
                     message: 'User error DB',
                     errors: err
                 });
-            }else{
+            }
+
+            User.countDocuments({}, (err, result) => {
+
+                if( err ){
+                    return res.status(500).json({
+                        ok: false,
+                        message: 'User error DB',
+                        errors: err
+                    });
+                }
+
                 res.status(200).json({
                     ok: true,
-                    users: users
+                    users: users,
+                    total: result,
+                    pagination:{
+                        actual: from,
+                        pages: Math.ceil(result/size),
+                        size: size
+                    }
                 });
-            }
+
+            });
+
         });
 });
 
