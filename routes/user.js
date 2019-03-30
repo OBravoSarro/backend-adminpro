@@ -20,7 +20,7 @@ app.get('/', (req, res, next) => {
     var size = req.query.size || PAGINATE_LIMIT;
     size = Number(size);
 
-    User.find({ }, 'name lastname email img role')
+    User.find({ }, 'name lastname email img role google')
     .skip(from*size)
     .limit(size)
     .exec(
