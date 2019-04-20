@@ -31,6 +31,7 @@ app.put('/:collection/:id', (req, res, next) => {
     extension = extension[extension.length - 1];
     // Valid extensions
     const validExtensions = ['png','jpg','jpeg','gif'];
+    const validCollections = ['users','hospitals','doctors'];
 
     if(validExtensions.indexOf(extension) < 0){
         return res.status(400).json({

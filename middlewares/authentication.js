@@ -26,3 +26,43 @@ exports.verifyToken = function(req, res, next) {
     });
 
 }
+// =============================================
+// Role verify middelware
+// =============================================
+exports.verifyAdminRole = function(req, res, next) {
+
+    var user = req.user;
+
+    if (user.role === 'ADMIN_ROLE') {
+        next();
+        return;
+    } else {
+        return res.status(401).json({
+            ok: false,
+            message: 'Unauthorized',
+            errors: {messagese: 'Unauthorized'}
+        });
+    }
+
+}
+
+// =============================================
+// Role verify middelware
+// =============================================
+exports.verifyAdminRoleOrSameUser = function(req, res, next) {
+
+    var user = req.user;
+    var id = req.params.id;
+
+    if (user.role === 'ADMIN_ROLE' || user._id === id) {
+        next();
+        return;
+    } else {
+        return res.status(401).json({
+            ok: false,
+            message: 'Unauthorized',
+            errors: {messagese: 'Unauthorized'}
+        });
+    }
+
+}

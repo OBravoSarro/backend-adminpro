@@ -54,7 +54,8 @@ app.post('/', (req, res) => {
             ok: true,
             user: userDB,
             token: token,
-            id: userDB._id
+            id: userDB._id,
+            menu: getMenu(userDB.role)
         });
 
     });
@@ -90,13 +91,12 @@ app.post('/google', async(req, res) => {
     var token = req.body.token;
 
     var googleUser = await verify( token ).catch(e => {
-        res.status(403).json({
+        return res.status(403).json({
             ok: false,
             message: 'Invalid token'
         });
     });
-
-    User.findOne( { emai: googleUser.email }, (err, userDB) => {
+    User.findOne( { email: googleUser.email }, (err, userDB) => {
         if( err ){
             return res.status(500).json({
                 ok: false,
@@ -120,7 +120,8 @@ app.post('/google', async(req, res) => {
                     ok: true,
                     user: userDB,
                     token: token,
-                    id: userDB._id
+                    id: userDB._id,
+                    menu: getMenu(userDB.role)
                 });
             }
         } else {
@@ -149,18 +150,43 @@ app.post('/google', async(req, res) => {
                     ok: true,
                     user: userDB,
                     token: token,
-                    id: userDB._id
+                    id: userDB._id,
+                    menu: getMenu(userDB.role)
                 });
             })
         }
     });
 
-    // res.status(200).json({
-    //     ok: true,
-    //     message: 'Login ok',
-    //     googleUser: googleUser
-    // });
 });
 
+function getMenu (role) {
+    var menu = [
+		{
+			title: 'General',
+			icon: 'mdi mdi-gauge',
+			submenu:[
+				{ title: 'Dashboard', url:'/dashboard' },
+				{ title: 'ProgressBar', url:'/progress' },
+				{ title: 'Graphics', url:'/graph1' },
+				{ title: 'Promises', url:'/promises' },
+				{ title: 'Rxjs', url:'/rxjs' }
+			]
+		},
+		{
+			title: 'Maintenance',
+			icon: 'mdi mdi-folder-lock-open',
+			submenu: [
+				{title: 'Hospitals', url: '/hospitals'},
+				{title: 'Doctors', url: '/doctors'}
+			]
+		}
+    ];
+
+    if (role === 'ADMIN_ROLE') {
+        menu[1].submenu.unshift({title: 'Users', url: '/users'});
+    }
+
+    return menu;
+}
 
 module.exports = app;

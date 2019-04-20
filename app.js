@@ -17,6 +17,12 @@ var appImgs = require('./routes/imgs');
 
 // Inicializar variables
 var app = express();
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    res.header("Access-Control-Allow-Methods", "POST, GET, PUT, DELETE, OPTIONS");
+    next();
+});
 
 // Conexion a base de datos
 mongoose.set('useCreateIndex', true);

@@ -59,6 +59,37 @@ app.get('/', (req, res, next) => {
         });
 });
 
+// ==========================================
+// Get Doctor
+// ==========================================
+app.get('/:id', (req, res) => {
+    var id = req.params.id;
+    Doctor.findById(id)
+        .populate('user', '_id')
+        .populate('hospital', '_id')
+        .exec((err, doctor) => {
+            if (err) {
+                return res.status(500).json({
+                    ok: false,
+                    message: 'Error get Doctor',
+                    errors: err
+                });
+            }
+            if (!doctor) {
+                return res.status(400).json({
+                    ok: false,
+                    message: 'Doctor not found'
+                });
+            } else {
+                res.status(200).json({
+                    ok: true,
+                    doctor: doctor
+                });
+            }
+        });
+ })
+
+
 // =============================================
 // New doctor
 // =============================================

@@ -113,7 +113,7 @@ function searchDoctors(searchRegexp, size){
 
 function searchUsers(searchRegexp, size){
     return new Promise( (resolve, reject) => {
-        User.find({}, 'name lastname email role img')
+        User.find({}, 'name lastname email role img google _id')
             .or( [ { name: searchRegexp }, { lastname: searchRegexp }, { email: searchRegexp } ] )
             .limit( size )
             .exec(( err, users ) => {

@@ -62,7 +62,7 @@ app.get('/', (req, res, next) => {
 // =============================================
 // New user
 // =============================================
-app.post('/', mdAuthentication.verifyToken,  (req, res) => {
+app.post('/', /* mdAuthentication.verifyToken, */  (req, res) => {
 
     var body = req.body;
 
@@ -79,7 +79,7 @@ app.post('/', mdAuthentication.verifyToken,  (req, res) => {
         if( err ){
             return res.status(400).json({
                 ok: false,
-                message: 'New user error DB',
+                message: 'Email is unique',
                 errors: err
             });
         }
@@ -97,7 +97,7 @@ app.post('/', mdAuthentication.verifyToken,  (req, res) => {
 // =============================================
 // Update user
 // =============================================
-app.put('/:id', mdAuthentication.verifyToken, (req, res) => {
+app.put('/:id', [mdAuthentication.verifyToken, mdAuthentication.verifyAdminRoleOrSameUser], (req, res) => {
 
     var id = req.params.id;
     var body = req.body;
